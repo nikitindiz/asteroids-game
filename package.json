@@ -2,7 +2,7 @@
   "name": "asteroids-clone",
   "version": "0.1.1",
   "description": "Atari's Asteroids Clone",
-  "license": "Creative Commons",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git://github.com/nikitindiz/asteroids-game.git"
