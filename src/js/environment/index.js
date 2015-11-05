@@ -1,4 +1,5 @@
 var environment = {
+
     "init" : function(){
         var my = this;
 
@@ -9,6 +10,7 @@ var environment = {
 
         return this;
     }
+
     , "resizeCanvas" : function resizeCanvas(){
         var my = this;
 
@@ -17,6 +19,7 @@ var environment = {
 
         return this;
     }
+
 };
 
 module.exports = environment;
