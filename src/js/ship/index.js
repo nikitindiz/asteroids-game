@@ -3,6 +3,7 @@ var cleanCanvas = require('../canvas-helpers').cleanCanvas;
 var ship = {
 
     "bufferCanvas" : document.createElement('canvas')
+
     , "angle" : 0
     , "posX" : 0
     , "posY" : 0
@@ -19,11 +20,13 @@ var ship = {
         return this;
     }
 
-    , "draw" : function (ctx){
+    , "draw" : function (canvas){
 
-        if(!ctx) throw new Error('No context given to draw the ship.');
+        if(!canvas) throw new Error('No context given to draw the ship.');
 
         var my = this
+
+            , ctx = canvas.getContext('2d')
 
             // Couple shortcuts to properties:
             , cs = my.bufferCanvasSize
@@ -51,16 +54,41 @@ var ship = {
         bctx.stroke();
         bctx.restore();
 
-        //bctx.beginPath();
-        //bctx.strokeStyle = 'white';
-        //bctx.fillStyle = 'rgba(255,255,255,0.1)';
-        //bctx.fillRect(0,0,my.bufferCanvasSize,my.bufferCanvasSize);
-        //bctx.closePath();
+        // console.log(canvas.width, canvas.height, my.posX, my.posY);
+        console.log(canvas.width, my.posX+cs, my.posY);
+
+        //if(my.posY - my.bufferCanvasSize < 0) {
+        //    ctx.drawImage(my.bufferCanvas,my.posX,canvas.height - my.posY - my.bufferCanvasSize);
+        //}
+        //
+        //if(my.posX - my.bufferCanvasSize < 0) {
+        //    ctx.drawImage(my.bufferCanvas,my.posX,canvas.width - my.posX - my.bufferCanvasSize);
+        //}
+
+        if(my.posX+cs > canvas.width) {
+            ctx.drawImage(my.bufferCanvas,-(cs-((my.posX+cs)-canvas.width)),my.posY);
+            console.log('bump');
+        }
+
+        if(my.posY+cs > canvas.height) {
+            ctx.drawImage(my.bufferCanvas,my.posX,-(cs-((my.posY+cs)-canvas.height)));
+        }
+
+        my.posX = my.posX > canvas.width
+            ? my.posX - canvas.width
+            : my.posX
+        ;
+
+        my.posY = my.posY > canvas.height
+            ? my.posY - canvas.height
+            : my.posY
+        ;
 
         ctx.drawImage(my.bufferCanvas,my.posX,my.posY);
 
         return this;
     }
+
 };
 
 module.exports = ship;

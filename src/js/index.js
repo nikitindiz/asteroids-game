@@ -6,6 +6,9 @@ var env = require('./environment')
 
 env.init();
 ship.init();
+
+// ship.posX = 1250;
+
 env.resizeCanvas();
 window.addEventListener('resize',env.resizeCanvas.bind(env));
 
@@ -16,9 +19,10 @@ function render(time) {
     requestAnimationFrame(render);
 
     cleanCanvas(env.canvas);
-    ship.angle = ship.angle + 5;
-    ship.posX = ship.posY = ship.posY + 0.02;
-    ship.draw(env.ctx);
+    ship.angle = ship.angle + 0.5;
+    ship.posX = ship.posX+1;
+    ship.posY = ship.posY+2; //ship.posY + 10;
+    ship.draw(env.canvas);
 
 }
 
