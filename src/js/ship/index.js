@@ -1,12 +1,14 @@
-var cleanCanvas = require('../canvas-helpers').cleanCanvas;
+var cleanCanvas = require('../canvas-helpers').cleanCanvas
+    , radDegRatio = Math.PI/180
+    ;
 
 var ship = {
 
     "bufferCanvas" : document.createElement('canvas')
 
     , "angle" : 0
-    , "posX" : 0
-    , "posY" : 0
+    , "posX" : window.innerWidth/2
+    , "posY" : window.innerHeight/2
 
     , "init" : function(){
         var my = this;
@@ -39,9 +41,10 @@ var ship = {
 
         cleanCanvas(my.bufferCanvas);
 
+        // Let's draw the spacecraft to buffer!
         bctx.save();
         bctx.translate(cs/2,cs/2);
-        bctx.rotate((Math.PI/180)*my.angle);
+        bctx.rotate(radDegRatio*my.angle);
         bctx.beginPath();
         bctx.strokeStyle = 'white';
         bctx.lineWidth = my.strokeSize;
@@ -54,26 +57,17 @@ var ship = {
         bctx.stroke();
         bctx.restore();
 
-        // console.log(canvas.width, canvas.height, my.posX, my.posY);
-        console.log(canvas.width, my.posX+cs, my.posY);
-
-        //if(my.posY - my.bufferCanvasSize < 0) {
-        //    ctx.drawImage(my.bufferCanvas,my.posX,canvas.height - my.posY - my.bufferCanvasSize);
-        //}
-        //
-        //if(my.posX - my.bufferCanvasSize < 0) {
-        //    ctx.drawImage(my.bufferCanvas,my.posX,canvas.width - my.posX - my.bufferCanvasSize);
-        //}
-
+        // Space should be infinite, so ...
+        // ... will draw clones if we are on the edge ...
         if(my.posX+cs > canvas.width) {
             ctx.drawImage(my.bufferCanvas,-(cs-((my.posX+cs)-canvas.width)),my.posY);
-            console.log('bump');
         }
 
         if(my.posY+cs > canvas.height) {
             ctx.drawImage(my.bufferCanvas,my.posX,-(cs-((my.posY+cs)-canvas.height)));
         }
 
+        // ... and teleport our ship if we are outside of canvas.
         my.posX = my.posX > canvas.width
             ? my.posX - canvas.width
             : my.posX
@@ -84,6 +78,17 @@ var ship = {
             : my.posY
         ;
 
+        my.posX = my.posX < 0
+            ? my.posX + canvas.width
+            : my.posX
+        ;
+
+        my.posY = my.posY < 0
+            ? my.posY + canvas.height
+            : my.posY
+        ;
+
+        // Ok, it's time to draw the buffer!
         ctx.drawImage(my.bufferCanvas,my.posX,my.posY);
 
         return this;

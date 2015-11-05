@@ -12,3 +12,7 @@ exports.cleanCanvas = function(canvas){
     ctx.globalCompositeOperation = 'source-over';
 
 };
+
+exports.degToRad = function(deg) {
+
+};
