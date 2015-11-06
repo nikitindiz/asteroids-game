@@ -1,6 +1,7 @@
 var env = require('./environment')
     , cleanCanvas = require('./canvas-helpers').cleanCanvas
     , ship = require('./ship')
+    , kc = require('./key-controls')
     , degree = 0
     , timer = 0
 
@@ -9,6 +10,7 @@ var env = require('./environment')
     , xSpeed = 0
     , ySpeed = 0
     , speedDelta = 0.05
+    , speedLimit = 10
 
     , angleDelta = 5
 
@@ -24,24 +26,7 @@ window.addEventListener('resize',env.resizeCanvas.bind(env));
 // Ship buffer
 ship.init();
 
-var kc = {
-    "init" : function(){
-
-        var my = this;
-
-        this.map = [];
-
-        window.addEventListener('keydown', captureKeys);
-        window.addEventListener('keyup', captureKeys);
-
-        function captureKeys(e){
-            e.preventDefault();
-            my.map[e.keyCode] = e.type == 'keydown';
-        }
-        return this;
-    }
-};
-
+// Key controls
 kc.init();
 
 // Game loop
@@ -63,34 +48,26 @@ function render(time) {
         : ship.angle;
 
     if(kc.map[87] || kc.map[38]) {
-        switch (ship.angle) {
-            case 0:
-                ySpeed = ySpeed - speedDelta;
-                break;
-            case 90:
-                xSpeed = xSpeed + speedDelta;
-                break;
-            case 180:
-                ySpeed = ySpeed + speedDelta;
-                break;
-            case 270:
-                xSpeed = xSpeed - speedDelta;
-                break;
-            default:
+        var xSign = 1
+            , ySign = 1
+            , xDelta = speedDelta * Math.sin(radDegRatio*ship.angle)
+            , yDelta = speedDelta * Math.cos(radDegRatio*ship.angle)
+            ;
 
-                var xSign = 1
-                    , ySign = 1
-                    , xDelta = speedDelta * Math.sin(radDegRatio*ship.angle)
-                    , yDelta = speedDelta * Math.cos(radDegRatio*ship.angle)
-                    ;
+        xSpeed = Math.abs(xSpeed + xDelta * xSign) < speedLimit
+            ? xSpeed + xDelta * xSign
+            : xSpeed;
+        ySpeed = Math.abs(ySpeed - yDelta * ySign) < speedLimit
+            ? ySpeed - yDelta * ySign
+            : ySpeed;
 
-                xSpeed = xSpeed + xDelta * xSign;
-                ySpeed = ySpeed - yDelta * ySign;
-
-        }
+        console.log(xSpeed, ySpeed);
     }
 
     ship.posX = ship.posX+xSpeed;
     ship.posY = ship.posY+ySpeed;
+
+
     ship.draw(env.canvas);
+
 }
