@@ -24,7 +24,7 @@ env.resizeCanvas();
 window.addEventListener('resize',env.resizeCanvas.bind(env));
 
 // Ship buffer
-ship.init();
+// ship.init();
 
 shot.init();
 
@@ -84,8 +84,8 @@ function render(time) {
         // Speed Up
         var xSign = 1
             , ySign = 1
-            , xDelta = speedDelta * Math.sin(radDegRatio*ship.angle)
-            , yDelta = speedDelta * Math.cos(radDegRatio*ship.angle)
+            , xDelta = ship.direction(speedDelta).x //speedDelta * Math.sin(radDegRatio*ship.angle)
+            , yDelta = ship.direction(speedDelta).y //speedDelta * Math.cos(radDegRatio*ship.angle)
             ;
 
         xSpeed = Math.abs(xSpeed + xDelta * xSign) < speedLimit
@@ -95,27 +95,68 @@ function render(time) {
             ? ySpeed - yDelta * ySign
             : ySpeed;
 
-        console.log(xSpeed, ySpeed);
-    }
+        ship.posX = ship.posX+xSpeed;
+        ship.posY = ship.posY+ySpeed;
 
-    ship.posX = ship.posX+xSpeed;
-    ship.posY = ship.posY+ySpeed;
+
+        env.ctx.beginPath();
+        env.ctx.strokeStyle = 'white';
+        env.ctx.lineWidth = 6;
+        env.ctx.lineCap = 'round';
+
+        env.ctx.moveTo(
+            ship.posX - ship.direction(20).x
+            , ship.posY + ship.direction(20).y
+        );
+
+        env.ctx.lineTo(
+            ship.posX - ship.direction(30 + Math.random() * 10).x
+            , ship.posY + ship.direction(30 + Math.random() * 10).y
+        );
+
+        env.ctx.stroke();
+        env.ctx.closePath();
+
+        env.ctx.beginPath();
+        env.ctx.strokeStyle = 'black';
+        env.ctx.lineWidth = 5;
+
+        env.ctx.moveTo(
+            ship.posX - ship.direction(20).x
+            , ship.posY + ship.direction(20).y
+        );
+
+        env.ctx.lineTo(
+            ship.posX - ship.direction(25 + Math.random() * 10).x
+            , ship.posY + ship.direction(25 + Math.random() * 10).y
+        );
+
+        env.ctx.stroke();
+        env.ctx.closePath();
+
+    } else {
+        ship.posX = ship.posX+xSpeed;
+        ship.posY = ship.posY+ySpeed;
+    }
 
     ship.draw(env.canvas);
 
     if(kc.map[32]) {
         // Fire
-        var shipX = ship.posX+ship.bufferCanvasSize/2
-            , shipY = ship.posY+ship.bufferCanvasSize/2
-            , shotX = 1000 * Math.sin(radDegRatio*ship.angle)
-            , shotY = 1000 * Math.cos(radDegRatio*ship.angle)
+        var shipX = ship.posX
+            , shipY = ship.posY
         ;
 
         env.ctx.beginPath();
         env.ctx.strokeStyle = 'white';
         env.ctx.lineWidth = 1;
         env.ctx.moveTo(shipX, shipY);
-        env.ctx.lineTo(shipX+shotX,shipY-shotY);
+
+        env.ctx.lineTo(
+            shipX + ship.direction(1000).x
+            , shipY - ship.direction(1000).y
+        );
+
         env.ctx.stroke();
         env.ctx.closePath();
 
@@ -127,7 +168,7 @@ function render(time) {
     shot.angle = 45;
 
     collider.posX = collider.posX + 1;
-    collider.posY = collider.posY + Math.sin(collider.posX/10)*10;
+    // collider.posY = collider.posY + 1;
 
     collider.draw(env.canvas);
 

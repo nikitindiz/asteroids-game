@@ -100,10 +100,7 @@ Shape.prototype.draw = function(canvas){
         : my.posY
     ;
 
-    // Space should be infinite, so ...
-    // ... will draw clones if we are on the edge
-
-    console.log(my.posX, canvas.width);
+    // Space should be infinite, so we will draw clones if we are on the edge
 
     if(my.posX+my.width/2 > canvas.width) {
         ctx.drawImage(my.bufferCanvas
@@ -119,12 +116,15 @@ Shape.prototype.draw = function(canvas){
         );
     }
 
-
-
     // Ok, it's time to draw the buffer!
     ctx.drawImage(my.bufferCanvas,my.posX-my.width/2,my.posY-my.height/2);
 
     return this;
+};
+
+Shape.prototype.direction = function(distance){
+
+    return { "x" : distance * Math.sin(radDegRatio*this.angle) , "y" : distance * Math.cos(radDegRatio*this.angle) };
 };
 
 module.exports = Shape;
