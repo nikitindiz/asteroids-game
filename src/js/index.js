@@ -1,9 +1,9 @@
 var env = require('./environment')
     , cleanCanvas = require('./canvas-helpers').cleanCanvas
     , ship = require('./ship')
+    , shot = require('./shot')
+    , Collider = require('./shape')
     , kc = require('./key-controls')
-    , degree = 0
-    , timer = 0
 
     , radDegRatio = Math.PI/180
 
@@ -26,8 +26,41 @@ window.addEventListener('resize',env.resizeCanvas.bind(env));
 // Ship buffer
 ship.init();
 
+shot.init();
+
 // Key controls
 kc.init();
+
+var collider = new Collider(0,0,68,100);
+
+collider.shape = function(canvas){
+
+    var
+        w = canvas.width
+        , h = canvas.height
+        , ctx = canvas.getContext('2d')
+        ;
+
+    ctx.beginPath();
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.moveTo(-w/2,-h/2);
+    ctx.lineTo(w,h);
+    ctx.stroke();
+    ctx.closePath();
+
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.fillRect(-w/2,-h/2,w,h);
+    ctx.closePath();
+
+    return canvas;
+};
+
+collider.posX = 100;
+collider.posY = 200;
+collider.boundingBoxColor = 'rgba(0,0,255,0.5)';
+
 
 // Game loop
 render();
@@ -48,6 +81,7 @@ function render(time) {
         : ship.angle;
 
     if(kc.map[87] || kc.map[38]) {
+        // Speed Up
         var xSign = 1
             , ySign = 1
             , xDelta = speedDelta * Math.sin(radDegRatio*ship.angle)
@@ -67,7 +101,34 @@ function render(time) {
     ship.posX = ship.posX+xSpeed;
     ship.posY = ship.posY+ySpeed;
 
-
     ship.draw(env.canvas);
+
+    if(kc.map[32]) {
+        // Fire
+        var shipX = ship.posX+ship.bufferCanvasSize/2
+            , shipY = ship.posY+ship.bufferCanvasSize/2
+            , shotX = 1000 * Math.sin(radDegRatio*ship.angle)
+            , shotY = 1000 * Math.cos(radDegRatio*ship.angle)
+        ;
+
+        env.ctx.beginPath();
+        env.ctx.strokeStyle = 'white';
+        env.ctx.lineWidth = 1;
+        env.ctx.moveTo(shipX, shipY);
+        env.ctx.lineTo(shipX+shotX,shipY-shotY);
+        env.ctx.stroke();
+        env.ctx.closePath();
+
+    }
+
+    shot.draw(env.canvas);
+    shot.posY = shot.posY - 5;
+    shot.posX = shot.posX + 5;
+    shot.angle = 45;
+
+    collider.posX = collider.posX + 1;
+    collider.posY = collider.posY + Math.sin(collider.posX/10)*10;
+
+    collider.draw(env.canvas);
 
 }

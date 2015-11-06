@@ -11,7 +11,6 @@ var keyControls = {
         function captureKeys(e){
             e.preventDefault();
             my.map[e.keyCode] = e.type == 'keydown';
-            console.log(e.keyCode);
         }
         return this;
     }
