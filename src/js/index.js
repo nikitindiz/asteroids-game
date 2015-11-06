@@ -16,69 +16,29 @@ var env = require('./environment')
 
     ;
 
-// Canvas wrapper
-// Can be used for adding special effects
+// Canvas wrapper. Will be used for adding special effects
 env.init();
+
 // Let's resize canvas each time we resize window
 env.resizeCanvas();
 window.addEventListener('resize',env.resizeCanvas.bind(env));
-
-// Ship buffer
-// ship.init();
 
 shot.init();
 
 // Key controls
 kc.init();
 
-var collider = new Collider(0,0,68,100);
-
-collider.shape = function(canvas){
-
-    var
-        w = canvas.width
-        , h = canvas.height
-        , ctx = canvas.getContext('2d')
-        ;
-
-    ctx.beginPath();
-    ctx.strokeStyle = 'white';
-    ctx.lineWidth = 2;
-    ctx.moveTo(-w/2,-h/2);
-    ctx.lineTo(w,h);
-    ctx.stroke();
-    ctx.closePath();
-
-    ctx.beginPath();
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
-    ctx.fillRect(-w/2,-h/2,w,h);
-    ctx.closePath();
-
-    return canvas;
-};
-
-collider.posX = 100;
-collider.posY = 200;
-collider.boundingBoxColor = 'rgba(0,0,255,0.5)';
-
-
-// Game loop
+// Game logic
 render();
 
 function render(time) {
+
     requestAnimationFrame(render);
+
     cleanCanvas(env.canvas);
 
     if(kc.map[37] || kc.map[65]) ship.angle = ship.angle - angleDelta;
     if(kc.map[39] || kc.map[68]) ship.angle = ship.angle + angleDelta;
-
-    ship.angle = ship.angle > 360
-        ? 0
-        : ship.angle;
-
-    ship.angle = ship.angle < 0
-        ? 360 - angleDelta
-        : ship.angle;
 
     if(kc.map[87] || kc.map[38]) {
         // Speed Up
@@ -139,8 +99,6 @@ function render(time) {
         ship.posY = ship.posY+ySpeed;
     }
 
-    ship.draw(env.canvas);
-
     if(kc.map[32]) {
         // Fire
         var shipX = ship.posX
@@ -162,14 +120,6 @@ function render(time) {
 
     }
 
-    shot.draw(env.canvas);
-    shot.posY = shot.posY - 5;
-    shot.posX = shot.posX + 5;
-    shot.angle = 45;
-
-    collider.posX = collider.posX + 1;
-    // collider.posY = collider.posY + 1;
-
-    collider.draw(env.canvas);
+    ship.draw(env.canvas);
 
 }

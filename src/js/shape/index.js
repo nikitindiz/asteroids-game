@@ -59,6 +59,15 @@ Shape.prototype.draw = function(canvas){
 
     ;
 
+    my.angle = my.angle > 360
+        ? 0
+        : my.angle;
+
+    my.angle = my.angle < 0
+        ? 360 + my.angle
+        : my.angle;
+
+
     my.bufferCanvas.width = my.width;
     my.bufferCanvas.height = my.height;
 

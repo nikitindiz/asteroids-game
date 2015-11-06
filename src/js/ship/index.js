@@ -1,6 +1,4 @@
-var cleanCanvas = require('../canvas-helpers').cleanCanvas
-    , Shape = require('../shape')
-    , radDegRatio = Math.PI/180
+var Shape = require('../shape')
 
     , scale = 20
     , strokeSize = 2
@@ -12,11 +10,7 @@ var cleanCanvas = require('../canvas-helpers').cleanCanvas
 
 spaceCraft.shape = function(canvas){
 
-    var
-        w = canvas.width
-        , h = canvas.height
-        , ctx = canvas.getContext('2d')
-        ;
+    var ctx = canvas.getContext('2d');
 
     ctx.beginPath();
     ctx.strokeStyle = 'white';
