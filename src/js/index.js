@@ -104,30 +104,11 @@ function render(time) {
     }
 
     if(kc.map[32]) {
-        // Fire
-        //var shipX = ship.posX
-        //    , shipY = ship.posY
-        //;
-
-        //env.ctx.beginPath();
-        //env.ctx.strokeStyle = 'white';
-        //env.ctx.lineWidth = 1;
-        //env.ctx.moveTo(shipX, shipY);
-        //
-        //env.ctx.lineTo(
-        //    shipX + ship.direction(1000).x
-        //    , shipY - ship.direction(1000).y
-        //);
-        //
-        //env.ctx.stroke();
-        //env.ctx.closePath();
-
         if(didntShootYet) {
             console.log('fire!');
             weapon.fire(ship.posX, ship.posY, ship.angle, (function(){return new Date();})().getTime());
             didntShootYet = false;
         }
-
     }
 
     weapon.drawBullets(env.canvas);
