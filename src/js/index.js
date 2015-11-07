@@ -1,11 +1,8 @@
 var env = require('./environment')
     , cleanCanvas = require('./canvas-helpers').cleanCanvas
     , ship = require('./ship')
-    , shot = require('./shot')
-    , Collider = require('./shape')
+    , weapon = require('./shot')
     , kc = require('./key-controls')
-
-    , radDegRatio = Math.PI/180
 
     , xSpeed = 0
     , ySpeed = 0
@@ -13,6 +10,8 @@ var env = require('./environment')
     , speedLimit = 10
 
     , angleDelta = 5
+
+    , didntShootYet = true
 
     ;
 
@@ -23,10 +22,11 @@ env.init();
 env.resizeCanvas();
 window.addEventListener('resize',env.resizeCanvas.bind(env));
 
-shot.init();
-
 // Key controls
 kc.init();
+kc.up(32, function(){
+    didntShootYet = true;
+});
 
 // Game logic
 render();
@@ -105,25 +105,32 @@ function render(time) {
 
     if(kc.map[32]) {
         // Fire
-        var shipX = ship.posX
-            , shipY = ship.posY
-        ;
+        //var shipX = ship.posX
+        //    , shipY = ship.posY
+        //;
 
-        env.ctx.beginPath();
-        env.ctx.strokeStyle = 'white';
-        env.ctx.lineWidth = 1;
-        env.ctx.moveTo(shipX, shipY);
+        //env.ctx.beginPath();
+        //env.ctx.strokeStyle = 'white';
+        //env.ctx.lineWidth = 1;
+        //env.ctx.moveTo(shipX, shipY);
+        //
+        //env.ctx.lineTo(
+        //    shipX + ship.direction(1000).x
+        //    , shipY - ship.direction(1000).y
+        //);
+        //
+        //env.ctx.stroke();
+        //env.ctx.closePath();
 
-        env.ctx.lineTo(
-            shipX + ship.direction(1000).x
-            , shipY - ship.direction(1000).y
-        );
-
-        env.ctx.stroke();
-        env.ctx.closePath();
+        if(didntShootYet) {
+            console.log('fire!');
+            weapon.fire(ship.posX, ship.posY, ship.angle, (function(){return new Date();})().getTime());
+            didntShootYet = false;
+        }
 
     }
 
+    weapon.drawBullets(env.canvas);
     ship.draw(env.canvas);
 
 }

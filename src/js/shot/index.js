@@ -1,107 +1,78 @@
 var cleanCanvas = require('../canvas-helpers').cleanCanvas
     , radDegRatio = Math.PI/180
+    , Shape = require('../shape')
+
+    , bulletSpeed = 1000
+    , maxDistance = Math.sqrt(window.innerWidth*window.innerWidth + window.innerHeight*window.innerHeight) / 20
+
     ;
 
+window.addEventListener('resize', function(){
+    maxDistance = Math.sqrt(window.innerWidth*window.innerWidth + window.innerHeight*window.innerHeight) / 20;
+});
+
 var shot = {
+    "fire" : function(startX, startY, angle, shootTime){
 
-    "bufferCanvas" : document.createElement('canvas')
-
-    , "angle" : 0
-    , "posX" : window.innerWidth/2
-    , "posY" : window.innerHeight/2
-
-    , "sizeX" : 3
-    , "sizeY" : 6
-
-    , "init" : function(){
-        var my = this;
-
-        my.bctx = my.bufferCanvas.getContext('2d');
-        my.scale = my.scale || 20;
-        my.strokeSize = my.strokeSize || 4;
-        my.bufferCanvasSize = Math.sqrt( (my.scale+my.strokeSize) * (my.scale+my.strokeSize) * 8 );
-        my.bufferCanvas.width = my.bufferCanvas.height = my.bufferCanvasSize;
-
-        return this;
-    }
-
-    , "draw" : function (canvas){
-
-        if(!canvas) throw new Error('No context given to draw the ship.');
+        console.log('pew pew');
+        console.log(arguments);
 
         var my = this
-
-            , ctx = canvas.getContext('2d')
-
-        // Couple shortcuts to properties:
-            , cs = my.bufferCanvasSize
-            , scale = my.scale
-
-        // Buffer context:
-            , bctx = my.bufferCanvas.getContext('2d')
-
-            ;
-
-        cleanCanvas(my.bufferCanvas);
-
-        // Let's draw the spacecraft to buffer!
-        bctx.save();
-        bctx.translate(cs/2,cs/2);
-        bctx.rotate(radDegRatio*my.angle);
-        bctx.beginPath();
-        bctx.strokeStyle = 'white';
-        bctx.lineWidth = my.strokeSize;
-
-        bctx.fillStyle = 'white';
-        bctx.fillRect(-my.sizeX/2,-my.sizeY/2,my.sizeX, my.sizeY);
-
-        bctx.closePath();
-
-        bctx.stroke();
-        bctx.restore();
-
-        //bctx.beginPath();
-        //bctx.fillStyle = 'rgba(255,255,255,0.1)';
-        //bctx.fillRect(0,0,cs,cs);
-        //bctx.closePath();
-
-        // Space should be infinite, so ...
-        // ... will draw clones if we are on the edge ...
-        if(my.posX+cs > canvas.width) {
-            ctx.drawImage(my.bufferCanvas,-(cs-((my.posX+cs)-canvas.width)),my.posY);
-        }
-
-        if(my.posY+cs > canvas.height) {
-            ctx.drawImage(my.bufferCanvas,my.posX,-(cs-((my.posY+cs)-canvas.height)));
-        }
-
-        // ... and teleport our ship if we are outside of canvas.
-        my.posX = my.posX > canvas.width
-            ? my.posX - canvas.width
-            : my.posX
+            , w = 10
+            , h = 15
+            , bullet = new Shape(startX, startY, w, h)
         ;
 
-        my.posY = my.posY > canvas.height
-            ? my.posY - canvas.height
-            : my.posY
-        ;
+        bullet.shape = function(canvas){
 
-        my.posX = my.posX < 0
-            ? my.posX + canvas.width
-            : my.posX
-        ;
+            var ctx = canvas.getContext('2d');
 
-        my.posY = my.posY < 0
-            ? my.posY + canvas.height
-            : my.posY
-        ;
+            ctx.beginPath();
+            ctx.fillStyle = 'white';
+            ctx.fillRect(-canvas.width/4,-canvas.height/4,canvas.width/2,canvas.height/2);
+            ctx.closePath();
 
-        // Ok, it's time to draw the buffer!
-        ctx.drawImage(my.bufferCanvas,my.posX,my.posY);
+            return canvas;
+        };
 
-        return this;
+        // bullet.boundingBoxColor = 'rgba(0,0,255,0.5)';
+        bullet.angle = angle;
+        bullet.shootTime = shootTime;
+        bullet.distance = 0;
+
+        my.bullets = my.bullets || [];
+
+        my.bullets.push(bullet);
+
     }
+    , "drawBullets" : function(canvas){
+        if(this.bullets && this.bullets.length) {
 
+            var bulletsCounter = this.bullets.length;
+
+            while(bulletsCounter--) {
+
+                var bullet = this.bullets[bulletsCounter];
+
+                if(bullet) {
+                    var currentTime = (function(){return new Date();})().getTime()
+                        , timeDelta = (currentTime - bullet.shootTime) / 1000
+                        ;
+
+                    bullet.shootTime = currentTime;
+                    bullet.posX = bullet.posX + bullet.direction(bulletSpeed * timeDelta).x;
+                    bullet.posY = bullet.posY - bullet.direction(bulletSpeed * timeDelta).y;
+                    bullet.draw(canvas);
+                    bullet.distance++;
+
+                    if(bullet.distance > maxDistance) {
+                        this.bullets[bulletsCounter] = false;
+                    }
+                }
+
+            }
+        }
+    }
 };
 
 module.exports = shot;

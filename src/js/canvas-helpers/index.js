@@ -5,7 +5,7 @@ exports.cleanCanvas = function(canvas){
         ;
 
     ctx.globalCompositeOperation = 'destination-out';
-    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillStyle = 'rgba(0,0,0,1)';
     ctx.beginPath();
     ctx.fillRect(0,0,width,width);
     ctx.closePath();

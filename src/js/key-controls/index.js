@@ -27,6 +27,29 @@ var keyControls = {
             throw new Error('No keycode given');
         }
     }
+    , "down" : function(keyCode, callback) {
+        if(keyCode) {
+            window.addEventListener('keydown', function(e){
+                if(e.type == 'keydown' && e.keyCode == keyCode && callback) {
+                    callback();
+                }
+            });
+        } else {
+            throw new Error('No keycode given');
+        }
+    }
+    , "up" : function(keyCode, callback) {
+        if(keyCode) {
+            window.addEventListener('keyup', function(e){
+                if(e.type == 'keyup' && e.keyCode == keyCode && callback) {
+                    callback();
+                }
+            });
+        } else {
+            throw new Error('No keycode given');
+        }
+    }
+
 };
 
 module.exports = keyControls;
