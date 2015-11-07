@@ -69,9 +69,11 @@ function render(time) {
             , ship.posY + ship.direction(20).y
         );
 
+        var dist = 25 + Math.random() * 30 * (Math.abs(xSpeed) + Math.abs(ySpeed))/2;
+
         env.ctx.lineTo(
-            ship.posX - ship.direction(30 + Math.random() * 10).x
-            , ship.posY + ship.direction(30 + Math.random() * 10).y
+            ship.posX - ship.direction(dist).x
+            , ship.posY + ship.direction(dist).y
         );
 
         env.ctx.stroke();
@@ -86,9 +88,11 @@ function render(time) {
             , ship.posY + ship.direction(20).y
         );
 
+        dist = 25 + Math.random() * 10 * (Math.abs(xSpeed) + Math.abs(ySpeed))/2;
+
         env.ctx.lineTo(
-            ship.posX - ship.direction(25 + Math.random() * 10).x
-            , ship.posY + ship.direction(25 + Math.random() * 10).y
+            ship.posX - ship.direction(dist).x
+            , ship.posY + ship.direction(dist).y
         );
 
         env.ctx.stroke();
