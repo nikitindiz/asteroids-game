@@ -72,7 +72,6 @@ var shot = {
 
                 this.bullets = this.bullets.filter(Boolean);
 
-                console.log(this.bullets ? this.bullets : 'empty array');
             }
 
         }

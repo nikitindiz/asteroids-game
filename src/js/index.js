@@ -2,6 +2,7 @@ var env = require('./environment')
     , cleanCanvas = require('./canvas-helpers').cleanCanvas
     , ship = require('./ship')
     , weapon = require('./shot')
+    , spaceRocks = require('./asteroids')
     , kc = require('./key-controls')
 
     , xSpeed = 0
@@ -27,6 +28,8 @@ kc.init();
 kc.up(32, function(){
     didntShootYet = true;
 });
+
+spaceRocks.materialize(200,200,45,(function(){return new Date();})().getTime());
 
 // Game logic
 render();
@@ -112,6 +115,11 @@ function render(time) {
     }
 
     weapon.drawBullets(env.canvas);
-    ship.draw(env.canvas);
 
+    spaceRocks.asteroids[0].angle = spaceRocks.asteroids[0].angle + 0.05;
+
+    spaceRocks.draw(env.canvas);
+
+    ship.draw(env.canvas);
 }
+
